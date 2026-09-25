@@ -31,8 +31,14 @@ final class Auth
      */
     private const string DUMMY_HASH = '$2y$12$.2QJ5GRCpS4ZTwl1tF/nxeUpaBRK0eNGnQVqDF4XS0sOh..DGGznu';
 
+    /**
+     * @var User|null Utilisateur connecté, une fois lu en base.
+     */
     private ?User $user = null;
 
+    /**
+     * @var bool Indique si l'utilisateur de la session a déjà été recherché.
+     */
     private bool $resolved = false;
 
     /**

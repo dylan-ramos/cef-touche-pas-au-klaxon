@@ -12,7 +12,9 @@ use DateTimeImmutable;
 final class SystemClock implements Clock
 {
     /**
-     * {@inheritDoc}
+     * Retourne l'instant présent.
+     *
+     * @return DateTimeImmutable
      */
     public function now(): DateTimeImmutable
     {

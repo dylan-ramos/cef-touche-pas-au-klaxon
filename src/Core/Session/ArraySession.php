@@ -14,10 +14,18 @@ final class ArraySession implements Session
      */
     private array $data = [];
 
+    /**
+     * @var int Nombre de régénérations d'identifiant demandées.
+     */
     private int $regenerations = 0;
 
     /**
-     * {@inheritDoc}
+     * Lit une valeur de session.
+     *
+     * @param string $key     Clé.
+     * @param mixed  $default Valeur retournée si la clé est absente.
+     *
+     * @return mixed
      */
     public function get(string $key, mixed $default = null): mixed
     {
@@ -25,7 +33,12 @@ final class ArraySession implements Session
     }
 
     /**
-     * {@inheritDoc}
+     * Enregistre une valeur en session.
+     *
+     * @param string $key   Clé.
+     * @param mixed  $value Valeur sérialisable.
+     *
+     * @return void
      */
     public function set(string $key, mixed $value): void
     {
@@ -33,7 +46,11 @@ final class ArraySession implements Session
     }
 
     /**
-     * {@inheritDoc}
+     * Indique si une clé est présente en session.
+     *
+     * @param string $key Clé.
+     *
+     * @return bool
      */
     public function has(string $key): bool
     {
@@ -41,7 +58,11 @@ final class ArraySession implements Session
     }
 
     /**
-     * {@inheritDoc}
+     * Supprime une valeur de session.
+     *
+     * @param string $key Clé.
+     *
+     * @return void
      */
     public function remove(string $key): void
     {
@@ -49,7 +70,9 @@ final class ArraySession implements Session
     }
 
     /**
-     * {@inheritDoc}
+     * Change l'identifiant de session en conservant les données.
+     *
+     * @return void
      */
     public function regenerate(): void
     {
@@ -57,7 +80,9 @@ final class ArraySession implements Session
     }
 
     /**
-     * {@inheritDoc}
+     * Supprime toutes les données et invalide la session.
+     *
+     * @return void
      */
     public function destroy(): void
     {

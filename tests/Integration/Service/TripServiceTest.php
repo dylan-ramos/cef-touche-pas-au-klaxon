@@ -174,6 +174,36 @@ final class TripServiceTest extends DatabaseTestCase
         }
     }
 
+    public function testAgencyDeletedDuringInputIsReportedAsValidationError(): void
+    {
+        $other = self::concurrentConnection();
+        $other->pdo()->exec("INSERT INTO agence (nom) VALUES ('Zzz Concurrence')");
+        $agencyId = (int) $other->pdo()->lastInsertId();
+        $clock = new FrozenClock(new DateTimeImmutable('2030-01-01 12:00:00'));
+        // Le validateur voit encore l'agence que la transaction du test vient de supprimer.
+        $service = new TripService($this->trips, new TripValidator(new AgencyRepository($other), $clock), $clock);
+        $this->database->pdo()->exec(sprintf('DELETE FROM agence WHERE id = %d', $agencyId));
+
+        try {
+            $service->create($this->martin, ['departure_agency_id' => (string) $agencyId] + self::INPUT);
+            self::fail('Une exception de validation était attendue.');
+        } catch (ValidationException $exception) {
+            self::assertArrayHasKey('form', $exception->errors());
+            self::assertSame((string) $agencyId, $exception->old()['departure_agency_id']);
+        } finally {
+            $this->database->pdo()->rollBack();
+            $other->pdo()->exec(sprintf('DELETE FROM agence WHERE id = %d', $agencyId));
+        }
+    }
+
+    public function testFormValuesMatchTheFormatOfTheForm(): void
+    {
+        $trip = $this->trips->findById($this->service->create($this->martin, self::INPUT));
+        self::assertNotNull($trip);
+
+        self::assertSame(self::INPUT, TripService::formValues($trip));
+    }
+
     public function testDeleteUnknownTripIsNotFound(): void
     {
         $this->expectException(NotFoundException::class);

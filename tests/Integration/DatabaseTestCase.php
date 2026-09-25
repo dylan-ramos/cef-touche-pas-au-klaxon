@@ -38,6 +38,18 @@ abstract class DatabaseTestCase extends TestCase
     }
 
     /**
+     * Seconde connexion à la base de test, indépendante de la transaction du
+     * test : simule un autre utilisateur travaillant en parallèle. Ses
+     * écritures sont validées immédiatement et doivent être nettoyées.
+     *
+     * @return Database
+     */
+    protected static function concurrentConnection(): Database
+    {
+        return Database::fromConfig(Config::load(dirname(__DIR__, 2)), 'DB_TEST_NAME', 'DB_TEST_USER', 'DB_TEST_PASSWORD');
+    }
+
+    /**
      * Données de trajet valides, modifiables par paramètres nommés.
      *
      * @param int    $departureAgencyId Agence de départ.

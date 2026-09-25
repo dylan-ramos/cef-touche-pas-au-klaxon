@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Service;
 
+use App\Core\Database;
 use App\Core\Http\NotFoundException;
 use App\Core\Validation\ValidationException;
 use App\Repository\AgencyRepository;
@@ -93,10 +94,63 @@ final class AgencyServiceTest extends DatabaseTestCase
         }
     }
 
+    public function testConcurrentDuplicateOnCreateIsReportedAsValidationError(): void
+    {
+        // Une autre session a déjà inséré « Dijon » ; le contrôle d'unicité, fait avant, ne le voyait pas.
+        $this->agencies->create('Dijon');
+
+        $this->expectException(ValidationException::class);
+
+        $this->serviceValidatedBy(self::concurrentConnection())->create(['name' => 'Dijon']);
+    }
+
+    public function testConcurrentDuplicateOnUpdateIsReportedAsValidationError(): void
+    {
+        $this->agencies->create('Dijon');
+
+        $this->expectException(ValidationException::class);
+
+        $this->serviceValidatedBy(self::concurrentConnection())->update(11, ['name' => 'Dijon']);
+    }
+
+    public function testTripAddedConcurrentlyBlocksDeletion(): void
+    {
+        $other = self::concurrentConnection();
+        $other->pdo()->exec("INSERT INTO agence (nom) VALUES ('Zzz Concurrence')");
+        $agencyId = (int) $other->pdo()->lastInsertId();
+
+        try {
+            // Première lecture : l'instantané de la transaction du test est figé ici.
+            self::assertNotNull($this->agencies->findById($agencyId));
+
+            $other->pdo()->exec(sprintf(
+                "INSERT INTO trajet (agence_depart_id, agence_arrivee_id, date_heure_depart, date_heure_arrivee,"
+                . ' places_totales, places_disponibles, auteur_id)'
+                . " VALUES (%d, 1, '2030-01-01 08:00', '2030-01-01 09:00', 2, 1, 1)",
+                $agencyId,
+            ));
+
+            $this->expectException(AgencyInUseException::class);
+            $this->service->delete($agencyId);
+        } finally {
+            $this->database->pdo()->rollBack();
+            $other->pdo()->exec(sprintf('DELETE FROM trajet WHERE agence_depart_id = %d', $agencyId));
+            $other->pdo()->exec(sprintf('DELETE FROM agence WHERE id = %d', $agencyId));
+        }
+    }
+
     public function testDeleteUnknownAgencyIsNotFound(): void
     {
         $this->expectException(NotFoundException::class);
 
         $this->service->delete(999);
+    }
+
+    /**
+     * Service dont le validateur lit les agences par une autre connexion.
+     */
+    private function serviceValidatedBy(Database $connection): AgencyService
+    {
+        return new AgencyService($this->agencies, new AgencyValidator(new AgencyRepository($connection)));
     }
 }

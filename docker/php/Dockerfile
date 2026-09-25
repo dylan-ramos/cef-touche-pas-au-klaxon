@@ -18,8 +18,9 @@ RUN groupmod -o -g "${GID}" www-data && usermod -o -u "${UID}" -g "${GID}" www-d
 
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/zz-app.ini
 COPY docker/php/vhost.conf /etc/apache2/sites-available/000-default.conf
+COPY docker/php/security.conf /etc/apache2/conf-available/zz-security.conf
 
-RUN a2enmod rewrite headers
+RUN a2enmod rewrite headers && a2enconf zz-security
 
 ENV COMPOSER_HOME=/tmp/composer
 WORKDIR /var/www/html

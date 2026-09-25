@@ -25,6 +25,8 @@ use App\Core\Database;
 use App\Core\ErrorHandler;
 use App\Core\Routing\ControllerDispatcher;
 use App\Core\Security\Csrf;
+use App\Core\Security\Throttle\FileThrottleStore;
+use App\Core\Security\Throttle\LoginThrottle;
 use App\Core\Session\Flash;
 use App\Core\Session\NativeSession;
 use App\Core\Session\Session;
@@ -95,6 +97,13 @@ return static function (Container $container, Config $config, string $rootDir): 
         $c->get(Flash::class),
     ));
 
+    $container->set(LoginThrottle::class, static fn (Container $c): LoginThrottle => new LoginThrottle(
+        new FileThrottleStore($rootDir . '/var/throttle'),
+        $c->get(Clock::class),
+        $config->int('LOGIN_MAX_ATTEMPTS', 5),
+        $config->int('LOGIN_LOCK_SECONDS', 900),
+    ));
+
     $container->set(LoginValidator::class, static fn (): LoginValidator => new LoginValidator());
 
     // --- Règles métier ---
@@ -132,6 +141,7 @@ return static function (Container $container, Config $config, string $rootDir): 
         $c->get(Auth::class),
         $c->get(LoginValidator::class),
         $c->get(Flash::class),
+        $c->get(LoginThrottle::class),
     ));
 
     $container->set(TripController::class, static fn (Container $c): TripController => new TripController(
