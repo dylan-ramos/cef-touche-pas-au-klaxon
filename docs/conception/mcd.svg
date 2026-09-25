@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <title>MCD — Touche pas au klaxon</title>
+  <rect width="1200" height="540" fill="#ffffff"/>
+  <text x="600" y="40" text-anchor="middle" font-size="22" font-weight="600" fill="#384050">Modèle conceptuel des données — Touche pas au klaxon</text>
+
+  <g stroke="#384050" stroke-width="2" fill="none">
+    <line x1="270" y1="285" x2="315" y2="285"/>
+    <line x1="435" y1="285" x2="480" y2="285"/>
+    <line x1="740" y1="220" x2="790" y2="185"/>
+    <line x1="910" y1="185" x2="960" y2="250"/>
+    <line x1="740" y1="350" x2="790" y2="385"/>
+    <line x1="910" y1="385" x2="960" y2="310"/>
+  </g>
+
+  <!-- UTILISATEUR -->
+  <g>
+    <rect x="40" y="160" width="230" height="250" rx="6" fill="#f1f8fc" stroke="#384050" stroke-width="2"/>
+    <rect x="40" y="160" width="230" height="40" rx="6" fill="#384050"/>
+    <rect x="40" y="186" width="230" height="14" fill="#384050"/>
+    <text x="155" y="187" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">UTILISATEUR</text>
+    <g font-size="15" fill="#384050">
+      <text x="58" y="230" text-decoration="underline" font-weight="600">id_utilisateur</text>
+      <text x="58" y="258">nom</text>
+      <text x="58" y="286">prénom</text>
+      <text x="58" y="314">téléphone</text>
+      <text x="58" y="342">email</text>
+      <text x="58" y="370">mot_de_passe</text>
+      <text x="58" y="398">rôle</text>
+    </g>
+  </g>
+
+  <!-- TRAJET -->
+  <g>
+    <rect x="480" y="175" width="260" height="220" rx="6" fill="#f1f8fc" stroke="#384050" stroke-width="2"/>
+    <rect x="480" y="175" width="260" height="40" rx="6" fill="#384050"/>
+    <rect x="480" y="201" width="260" height="14" fill="#384050"/>
+    <text x="610" y="202" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">TRAJET</text>
+    <g font-size="15" fill="#384050">
+      <text x="498" y="246" text-decoration="underline" font-weight="600">id_trajet</text>
+      <text x="498" y="276">date_heure_départ</text>
+      <text x="498" y="306">date_heure_arrivée</text>
+      <text x="498" y="336">places_totales</text>
+      <text x="498" y="366">places_disponibles</text>
+    </g>
+  </g>
+
+  <!-- AGENCE -->
+  <g>
+    <rect x="960" y="225" width="200" height="110" rx="6" fill="#f1f8fc" stroke="#384050" stroke-width="2"/>
+    <rect x="960" y="225" width="200" height="40" rx="6" fill="#384050"/>
+    <rect x="960" y="251" width="200" height="14" fill="#384050"/>
+    <text x="1060" y="252" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">AGENCE</text>
+    <g font-size="15" fill="#384050">
+      <text x="978" y="294" text-decoration="underline" font-weight="600">id_agence</text>
+      <text x="978" y="322">nom</text>
+    </g>
+  </g>
+
+  <!-- Associations -->
+  <g font-size="15" font-weight="600" fill="#00497c" text-anchor="middle">
+    <ellipse cx="375" cy="285" rx="60" ry="30" fill="#ffffff" stroke="#0074c7" stroke-width="2"/>
+    <text x="375" y="290">PROPOSER</text>
+    <ellipse cx="850" cy="185" rx="60" ry="30" fill="#ffffff" stroke="#0074c7" stroke-width="2"/>
+    <text x="850" y="190">PARTIR_DE</text>
+    <ellipse cx="850" cy="385" rx="60" ry="30" fill="#ffffff" stroke="#0074c7" stroke-width="2"/>
+    <text x="850" y="390">ARRIVER_À</text>
+  </g>
+
+  <!-- Cardinalités -->
+  <g font-size="15" font-weight="700" fill="#cd2c2e" text-anchor="middle">
+    <text x="292" y="272">0,n</text>
+    <text x="458" y="272">1,1</text>
+    <text x="752" y="192">1,1</text>
+    <text x="958" y="214">0,n</text>
+    <text x="752" y="388">1,1</text>
+    <text x="958" y="360">0,n</text>
+  </g>
+
+  <g font-size="13" fill="#384050">
+    <text x="40" y="470">Un utilisateur propose 0 à n trajets ; un trajet est proposé par exactement 1 utilisateur (la personne à contacter).</text>
+    <text x="40" y="492">Un trajet part d'exactement 1 agence et arrive à exactement 1 agence ; une agence est le départ ou l'arrivée de 0 à n trajets.</text>
+    <text x="40" y="514">Règles : agence de départ ≠ agence d'arrivée ; arrivée postérieure au départ ; 1 ≤ places totales ≤ 9 ; 0 ≤ places disponibles ≤ places totales.</text>
+  </g>
+</svg>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdocumentor configVersion="3"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns="https://www.phpdoc.org"
+               xsi:noNamespaceSchemaLocation="https://docs.phpdoc.org/latest/phpdoc.xsd">
+    <title>Touche pas au klaxon — documentation technique</title>
+    <paths>
+        <output>var/docs</output>
+        <cache>var/phpdoc-cache</cache>
+    </paths>
+    <version number="latest">
+        <api>
+            <source dsn=".">
+                <path>src</path>
+            </source>
+            <visibility>public</visibility>
+            <visibility>protected</visibility>
+            <visibility>private</visibility>
+            <default-package-name>App</default-package-name>
+        </api>
+    </version>
+</phpdocumentor>
