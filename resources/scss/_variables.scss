@@ -1,0 +1,40 @@
+// =============================================================================
+// Palette et variables Bootstrap
+// -----------------------------------------------------------------------------
+// Seul fichier contenant des couleurs. Tous les styles de l'application
+// utilisent les variables Bootstrap qui en découlent ($primary, $dark…).
+//
+// Pour décliner l'application sur un autre site intranet, il suffit de
+// remplacer les valeurs ci-dessous puis de relancer `make css`.
+// =============================================================================
+
+// --- Palette ---
+$klaxon-sky: #f1f8fc;
+$klaxon-blue: #0074c7;
+$klaxon-navy: #00497c;
+$klaxon-slate: #384050;
+$klaxon-red: #cd2c2e;
+$klaxon-green: #82b864;
+
+// --- Couleurs de thème Bootstrap ---
+$primary: $klaxon-blue;
+$secondary: $klaxon-navy;
+$info: $klaxon-blue;
+$success: $klaxon-green;
+$danger: $klaxon-red;
+$light: $klaxon-sky;
+$dark: $klaxon-slate;
+
+// --- Corps de page ---
+$body-color: $klaxon-slate;
+$link-color: $klaxon-blue;
+
+// --- Composants ---
+$font-family-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$headings-font-weight: 400;
+$border-radius-xl: 1rem;
+$table-cell-padding-y: .55rem;
+$table-striped-bg-factor: .45;
+$table-striped-bg: $klaxon-sky;
+$btn-font-weight: 400;
+$min-contrast-ratio: 3;
