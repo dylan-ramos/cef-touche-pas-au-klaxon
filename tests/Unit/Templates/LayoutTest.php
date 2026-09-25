@@ -85,7 +85,14 @@ final class LayoutTest extends TestCase
     {
         $this->view->share('currentUser', $user);
 
-        return (string) $this->view->render('home/index')->getContent();
+        $this->view->share('csrfToken', 'jeton');
+
+        return (string) $this->view->render('errors/error', [
+            'title' => 'Titre',
+            'status' => 404,
+            'message' => 'Message',
+            'details' => null,
+        ])->getContent();
     }
 
     private static function user(Role $role): User
