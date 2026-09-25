@@ -45,6 +45,19 @@ final class ViewTest extends TestCase
         self::assertStringContainsString('Bonjour fragment', $html);
     }
 
+    public function testLazySharedDataIsResolvedAtRenderTimeUnlessProvided(): void
+    {
+        $name = 'initial';
+        $this->view->share('appName', 'Klaxon');
+        $this->view->shareLazy('name', static function () use (&$name): string {
+            return $name;
+        });
+        $name = 'au rendu';
+
+        self::assertStringContainsString('Bonjour au rendu', $this->view->partial('pages/hello'));
+        self::assertStringContainsString('Bonjour explicite', $this->view->partial('pages/hello', ['name' => 'explicite']));
+    }
+
     public function testRejectsTemplateNameOutsideTemplateDirectory(): void
     {
         $this->expectException(InvalidArgumentException::class);
