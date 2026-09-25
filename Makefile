@@ -6,7 +6,7 @@ EXEC    := $(DC) exec -T -u www-data app
 COMPOSE_ENV := UID=$(shell id -u) GID=$(shell id -g)
 
 .DEFAULT_GOAL := help
-.PHONY: help install up down restart ps logs sh composer-install db-reset db-shell lint lint-fix stan test test-unit test-integration coverage verify npm-install css css-watch
+.PHONY: help install up down restart ps logs sh composer-install db-reset db-shell lint lint-fix stan test test-unit test-integration coverage verify npm-install css css-watch docs
 
 help: ## Affiche cette aide
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
@@ -77,3 +77,7 @@ css: ## Compile le Sass et copie les ressources front dans public/assets
 
 css-watch: ## Recompile le Sass à chaque modification
 	$(COMPOSE_ENV) $(DC) run --rm assets npm run watch:css
+
+docs: ## Génère la documentation technique à partir des DocBlock (var/docs/index.html)
+	docker run --rm -u $(shell id -u):$(shell id -g) -v "$(CURDIR):/data" phpdoc/phpdoc:3 run -q
+	@echo "Documentation générée : var/docs/index.html"
