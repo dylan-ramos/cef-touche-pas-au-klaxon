@@ -13,6 +13,7 @@ declare(strict_types=1);
 use App\Controller\Admin\DashboardController;
 use App\Controller\AuthController;
 use App\Controller\HomeController;
+use App\Controller\TripController;
 use App\Core\Clock\Clock;
 use App\Core\Clock\SystemClock;
 use App\Core\Config;
@@ -25,10 +26,13 @@ use App\Core\Session\Flash;
 use App\Core\Session\NativeSession;
 use App\Core\Session\Session;
 use App\Core\View;
+use App\Repository\AgencyRepository;
 use App\Repository\TripRepository;
 use App\Repository\UserRepository;
 use App\Security\Auth;
+use App\Service\TripService;
 use App\Validator\LoginValidator;
+use App\Validator\TripValidator;
 use Symfony\Component\HttpFoundation\Request;
 
 return static function (Container $container, Config $config, string $rootDir): void {
@@ -70,6 +74,10 @@ return static function (Container $container, Config $config, string $rootDir): 
         $c->get(Database::class),
     ));
 
+    $container->set(AgencyRepository::class, static fn (Container $c): AgencyRepository => new AgencyRepository(
+        $c->get(Database::class),
+    ));
+
     $container->set(TripRepository::class, static fn (Container $c): TripRepository => new TripRepository(
         $c->get(Database::class),
     ));
@@ -83,6 +91,18 @@ return static function (Container $container, Config $config, string $rootDir): 
     ));
 
     $container->set(LoginValidator::class, static fn (): LoginValidator => new LoginValidator());
+
+    // --- Règles métier ---
+    $container->set(TripValidator::class, static fn (Container $c): TripValidator => new TripValidator(
+        $c->get(AgencyRepository::class),
+        $c->get(Clock::class),
+    ));
+
+    $container->set(TripService::class, static fn (Container $c): TripService => new TripService(
+        $c->get(TripRepository::class),
+        $c->get(TripValidator::class),
+        $c->get(Clock::class),
+    ));
 
     // --- Contrôleurs ---
     $container->set(HomeController::class, static fn (Container $c): HomeController => new HomeController(
@@ -98,6 +118,16 @@ return static function (Container $container, Config $config, string $rootDir): 
         $c->get(Auth::class),
         $c->get(LoginValidator::class),
         $c->get(Flash::class),
+    ));
+
+    $container->set(TripController::class, static fn (Container $c): TripController => new TripController(
+        $c->get(Request::class),
+        $c->get(View::class),
+        $c->get(Auth::class),
+        $c->get(TripService::class),
+        $c->get(AgencyRepository::class),
+        $c->get(Flash::class),
+        $c->get(Clock::class),
     ));
 
     $container->set(DashboardController::class, static fn (Container $c): DashboardController => new DashboardController(
