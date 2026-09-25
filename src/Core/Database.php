@@ -13,7 +13,8 @@ use Throwable;
  *
  * La connexion PDO est ouverte à la première utilisation et configurée de
  * façon sécurisée : exceptions systématiques, requêtes réellement préparées
- * côté serveur et encodage utf8mb4.
+ * côté serveur et encodage utf8mb4. Le nombre de lignes affectées par une
+ * mise à jour compte les lignes trouvées, même inchangées.
  */
 final class Database
 {
@@ -69,6 +70,7 @@ final class Database
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_STRINGIFY_FETCHES => false,
+            PDO::MYSQL_ATTR_FOUND_ROWS => true,
         ]);
     }
 
