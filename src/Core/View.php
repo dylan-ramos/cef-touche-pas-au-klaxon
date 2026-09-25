@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use Closure;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +24,11 @@ final class View
      * @var array<string, mixed> Données communes à tous les gabarits.
      */
     private array $shared = [];
+
+    /**
+     * @var array<string, Closure(): mixed> Données communes calculées au moment du rendu.
+     */
+    private array $lazy = [];
 
     /**
      * @param string $templateDir Répertoire contenant les gabarits.
@@ -45,6 +51,20 @@ final class View
     public function share(string $key, mixed $value): void
     {
         $this->shared[$key] = $value;
+    }
+
+    /**
+     * Partage une donnée calculée au moment du rendu (utilisateur connecté,
+     * jeton de formulaire…), plutôt qu'à la construction de la vue.
+     *
+     * @param string          $key      Nom de la variable dans les gabarits.
+     * @param Closure(): mixed $resolver Fonction retournant la valeur.
+     *
+     * @return void
+     */
+    public function shareLazy(string $key, Closure $resolver): void
+    {
+        $this->lazy[$key] = $resolver;
     }
 
     /**
@@ -78,6 +98,11 @@ final class View
     {
         $file = $this->resolve($template);
         $variables = array_merge($this->shared, $data);
+        foreach ($this->lazy as $key => $resolver) {
+            if (!array_key_exists($key, $variables)) {
+                $variables[$key] = $resolver();
+            }
+        }
 
         ob_start();
         try {

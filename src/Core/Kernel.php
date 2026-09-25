@@ -6,6 +6,7 @@ namespace App\Core;
 
 use App\Core\Http\NotFoundException;
 use App\Core\Routing\ControllerDispatcher;
+use App\Core\Security\Csrf;
 use Buki\Router\Router;
 use Closure;
 use ErrorException;
@@ -17,6 +18,9 @@ use Throwable;
 /**
  * Point d'entrée de l'application : configuration, services, routage et
  * gestion globale des erreurs.
+ *
+ * Toute requête POST doit porter un jeton CSRF valide : la vérification est
+ * faite ici, une fois pour toutes les routes.
  */
 final class Kernel
 {
@@ -38,14 +42,16 @@ final class Kernel
         date_default_timezone_set($config->string('APP_TIMEZONE', 'Europe/Paris'));
         $this->registerErrorConversion();
 
-        $container = $this->buildContainer($config);
+        $request = $this->createRequest();
+        $container = $this->buildContainer($config, $request);
         $errorHandler = $container->get(ErrorHandler::class);
 
         try {
-            $router = new Router(
-                ['debug' => true, 'base_folder' => $this->rootDir . '/public'],
-                $this->createRequest(),
-            );
+            if ($request->isMethod(Request::METHOD_POST)) {
+                $container->get(Csrf::class)->assertValid($request->request->get(Csrf::FIELD));
+            }
+
+            $router = new Router(['debug' => true, 'base_folder' => $this->rootDir . '/public'], $request);
             $router->notFound(static fn (): Response => $errorHandler->handle(new NotFoundException()));
 
             $routes = $this->requireClosure('config/routes.php');
@@ -78,14 +84,16 @@ final class Kernel
     /**
      * Construit le conteneur de services à partir de `config/services.php`.
      *
-     * @param Config $config Configuration chargée.
+     * @param Config  $config  Configuration chargée.
+     * @param Request $request Requête HTTP courante, mise à disposition des contrôleurs.
      *
      * @return Container
      */
-    private function buildContainer(Config $config): Container
+    private function buildContainer(Config $config, Request $request): Container
     {
         $container = new Container();
         $container->instance(Config::class, $config);
+        $container->instance(Request::class, $request);
         $container->instance(self::class, $this);
 
         $services = $this->requireClosure('config/services.php');

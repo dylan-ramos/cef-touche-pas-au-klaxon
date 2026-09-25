@@ -26,7 +26,10 @@ $currentUser ??= null;
 <body class="d-flex flex-column min-vh-100">
 <div class="container flex-grow-1 py-3">
     <?= $view->partial('partials/header', ['currentUser' => $currentUser]) ?>
-    <?= $view->partial('partials/flash', ['messages' => $flash->consume()]) ?>
+<?php $flashMessages = $flash->consume(); ?>
+<?php if ($flashMessages !== []) : ?>
+    <?= $view->partial('partials/flash', ['messages' => $flashMessages]) ?>
+<?php endif; ?>
     <main id="contenu">
         <?= $content ?>
     </main>
