@@ -13,7 +13,10 @@
 
 declare(strict_types=1);
 
+use App\Controller\Admin\AgencyController;
 use App\Controller\Admin\DashboardController;
+use App\Controller\Admin\TripController as AdminTripController;
+use App\Controller\Admin\UserController;
 use App\Controller\AuthController;
 use App\Controller\HomeController;
 use App\Controller\TripController;
@@ -45,4 +48,15 @@ return static function (Router $router, ControllerDispatcher $dispatch, Containe
 
     // --- Administration ---
     $router->get('/admin', $dispatch->to(DashboardController::class, 'index', $admin));
+    $router->get('/admin/users', $dispatch->to(UserController::class, 'index', $admin));
+
+    $router->get('/admin/agencies', $dispatch->to(AgencyController::class, 'index', $admin));
+    $router->get('/admin/agencies/create', $dispatch->to(AgencyController::class, 'create', $admin));
+    $router->post('/admin/agencies', $dispatch->to(AgencyController::class, 'store', $admin));
+    $router->get('/admin/agencies/:id/edit', $dispatch->to(AgencyController::class, 'edit', $admin));
+    $router->post('/admin/agencies/:id', $dispatch->to(AgencyController::class, 'update', $admin));
+    $router->post('/admin/agencies/:id/delete', $dispatch->to(AgencyController::class, 'delete', $admin));
+
+    $router->get('/admin/trips', $dispatch->to(AdminTripController::class, 'index', $admin));
+    $router->post('/admin/trips/:id/delete', $dispatch->to(AdminTripController::class, 'delete', $admin));
 };

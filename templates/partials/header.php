@@ -17,7 +17,7 @@ $csrfToken ??= '';
 <header class="app-header navbar px-3 py-2 mb-4">
     <a class="navbar-brand app-brand" href="<?= $currentUser?->isAdmin() === true ? '/admin' : '/' ?>"><?= e($appName) ?></a>
 
-    <nav class="d-flex align-items-center gap-3" aria-label="Navigation principale">
+    <nav class="d-flex align-items-center gap-2 text-nowrap" aria-label="Navigation principale">
         <?php if ($currentUser === null) : ?>
             <a class="btn btn-dark" href="/login">Connexion</a>
         <?php else : ?>
@@ -28,7 +28,7 @@ $csrfToken ??= '';
             <?php else : ?>
                 <a class="btn btn-dark" href="/trips/create">Créer un trajet</a>
             <?php endif; ?>
-            <span>Bonjour <?= e($currentUser->fullName()) ?></span>
+            <span class="mx-2">Bonjour <?= e($currentUser->fullName()) ?></span>
             <form method="post" action="/logout" class="m-0">
                 <input type="hidden" name="_csrf" value="<?= e($csrfToken) ?>">
                 <button type="submit" class="btn btn-dark">Déconnexion</button>
