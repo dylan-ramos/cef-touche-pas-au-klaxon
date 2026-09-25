@@ -1,0 +1,10 @@
+parameters:
+    level: max
+    paths:
+        - src
+        - config
+        - tests
+        - public/index.php
+    excludePaths:
+        - tests/Fixtures/templates/*
+    tmpDir: var/phpstan

@@ -1,0 +1,71 @@
+{
+    "name": "dylan-ramos/touche-pas-au-klaxon",
+    "description": "Application intranet de covoiturage inter-sites (architecture MVC PHP).",
+    "type": "project",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Dylan Ramos",
+            "email": "dylan.ramos.n@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "ext-mbstring": "*",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "izniburak/router": "^3.1",
+        "symfony/http-foundation": "^6.4",
+        "vlucas/phpdotenv": "^5.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        },
+        "files": [
+            "src/Core/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "platform": {
+            "php": "8.3.6"
+        },
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    },
+    "require-dev": {
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.2",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpunit/phpunit": "^12.5",
+        "squizlabs/php_codesniffer": "^4.0"
+    },
+    "scripts": {
+        "lint": "phpcs",
+        "lint:fix": "phpcbf",
+        "stan": "phpstan analyse --memory-limit=512M",
+        "test": "phpunit",
+        "test:unit": "phpunit --testsuite Unit",
+        "test:integration": "phpunit --testsuite Integration",
+        "verify": [
+            "@lint",
+            "@stan",
+            "@test"
+        ]
+    },
+    "scripts-descriptions": {
+        "lint": "Contrôle du respect de la norme PSR-12",
+        "lint:fix": "Correction automatique des écarts PSR-12",
+        "stan": "Analyse statique PHPStan",
+        "test": "Exécution de toutes les suites PHPUnit",
+        "verify": "Contrôles qualité complets"
+    }
+}

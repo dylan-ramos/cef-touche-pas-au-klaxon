@@ -1,0 +1,4 @@
+# Toute requête ne correspondant pas à un fichier existant est confiée au contrôleur frontal.
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]
