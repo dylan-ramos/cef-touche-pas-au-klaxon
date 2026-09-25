@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Core\Http\MethodNotAllowedException;
 use App\Core\Http\NotFoundException;
+use App\Core\Routing\AllowedMethods;
 use App\Core\Routing\ControllerDispatcher;
 use App\Core\Security\Csrf;
 use Buki\Router\Router;
@@ -52,7 +54,11 @@ final class Kernel
             }
 
             $router = new Router(['debug' => true, 'base_folder' => $this->rootDir . '/public'], $request);
-            $router->notFound(static fn (): Response => $errorHandler->handle(new NotFoundException()));
+            $router->notFound(static function () use ($router, $request, $errorHandler): Response {
+                $allowed = AllowedMethods::for($router->getRoutes(), $request->getPathInfo());
+
+                return $errorHandler->handle($allowed === [] ? new NotFoundException() : new MethodNotAllowedException($allowed));
+            });
 
             $routes = $this->requireClosure('config/routes.php');
             $routes($router, $container->get(ControllerDispatcher::class), $container);

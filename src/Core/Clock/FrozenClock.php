@@ -19,7 +19,9 @@ final class FrozenClock implements Clock
     }
 
     /**
-     * {@inheritDoc}
+     * Retourne l'instant présent.
+     *
+     * @return DateTimeImmutable
      */
     public function now(): DateTimeImmutable
     {

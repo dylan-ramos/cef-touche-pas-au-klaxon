@@ -18,6 +18,9 @@ use Throwable;
  */
 final class Database
 {
+    /**
+     * @var PDO|null Connexion ouverte à la première requête.
+     */
     private ?PDO $pdo = null;
 
     /**

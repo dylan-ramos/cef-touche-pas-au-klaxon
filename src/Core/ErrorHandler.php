@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core;
 
 use App\Core\Http\HttpException;
+use App\Core\Http\MethodNotAllowedException;
 use Closure;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
@@ -76,11 +77,17 @@ final class ErrorHandler
         ];
 
         try {
-            return $this->view->render('errors/error', $data, $status);
+            $response = $this->view->render('errors/error', $data, $status);
         } catch (Throwable $renderingError) {
             ($this->logger)(sprintf('[%s] %s', $renderingError::class, (string) $renderingError));
 
-            return new Response($data['title'] . ' — ' . $message, $status, ['Content-Type' => 'text/plain; charset=UTF-8']);
+            $response = new Response($data['title'] . ' — ' . $message, $status, ['Content-Type' => 'text/plain; charset=UTF-8']);
         }
+
+        if ($exception instanceof MethodNotAllowedException) {
+            $response->headers->set('Allow', implode(', ', $exception->getAllowedMethods()));
+        }
+
+        return $response;
     }
 }

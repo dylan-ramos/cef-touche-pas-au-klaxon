@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Controller;
 
 use App\Controller\AuthController;
+use App\Core\Clock\FrozenClock;
+use App\Core\Security\Throttle\ArrayThrottleStore;
+use App\Core\Security\Throttle\LoginThrottle;
 use App\Tests\Integration\DatabaseTestCase;
 use App\Tests\Integration\ServiceFactory;
 use App\Validator\LoginValidator;
+use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,10 +24,38 @@ final class AuthControllerTest extends DatabaseTestCase
 {
     private ServiceFactory $services;
 
+    private ArrayThrottleStore $throttleStore;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->services = new ServiceFactory($this->database);
+        $this->throttleStore = new ArrayThrottleStore();
+    }
+
+    public function testRepeatedFailuresBlockFurtherAttemptsEvenWithRightPassword(): void
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $failure = $this->controller(['email' => 'sophie.dubois@email.fr', 'password' => 'faux'])->login();
+            self::assertSame(422, $failure->getStatusCode());
+        }
+
+        $response = $this->controller(['email' => 'sophie.dubois@email.fr', 'password' => 'Covoiturage#2026'])->login();
+
+        self::assertSame(429, $response->getStatusCode());
+        self::assertStringContainsString('Veuillez réessayer dans 15 minutes.', (string) $response->getContent());
+        self::assertNull($this->services->auth->user());
+    }
+
+    public function testSuccessfulLoginResetsFailureCounter(): void
+    {
+        for ($i = 0; $i < 4; $i++) {
+            $this->controller(['email' => 'sophie.dubois@email.fr', 'password' => 'faux'])->login();
+        }
+
+        $this->controller(['email' => 'sophie.dubois@email.fr', 'password' => 'Covoiturage#2026'])->login();
+
+        self::assertNull($this->throttleStore->get(LoginThrottle::key('sophie.dubois@email.fr', '127.0.0.1')));
     }
 
     public function testLoginFormIsDisplayed(): void
@@ -106,6 +138,7 @@ final class AuthControllerTest extends DatabaseTestCase
             $this->services->auth,
             new LoginValidator(),
             $this->services->flash,
+            new LoginThrottle($this->throttleStore, new FrozenClock(new DateTimeImmutable('2030-01-01 12:00:00'))),
         );
     }
 }

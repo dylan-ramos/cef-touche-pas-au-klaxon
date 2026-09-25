@@ -46,4 +46,6 @@ mysql -u root -p < database/02_seed.sql
 mysql -u root -p < database/03_checks.sql
 ```
 
+Sécurité : [mesures et recette](docs/securite.md).
+
 Conception : [MCD](docs/conception/mcd.md), [MLD](docs/conception/mld.md), [dictionnaire des données](docs/conception/dictionnaire.md).

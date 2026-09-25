@@ -24,6 +24,31 @@
         </properties>
     </rule>
 
+    <!-- Documentation DocBlock obligatoire du code applicatif : classes, propriétés et méthodes. -->
+    <rule ref="Squiz.Commenting.ClassComment">
+        <exclude-pattern>tests/*</exclude-pattern>
+        <exclude name="Squiz.Commenting.ClassComment.TagNotAllowed"/>
+    </rule>
+    <!-- Types courts PHP (int, bool) conservés, conformément à PHPStan et PSR-5. -->
+    <rule ref="Squiz.Commenting.VariableComment">
+        <exclude-pattern>tests/*</exclude-pattern>
+        <exclude name="Squiz.Commenting.VariableComment.IncorrectVarType"/>
+    </rule>
+    <rule ref="Squiz.Commenting.FunctionComment">
+        <exclude-pattern>tests/*</exclude-pattern>
+        <exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop"/>
+        <exclude name="Squiz.Commenting.FunctionComment.ThrowsNoFullStop"/>
+        <exclude name="Squiz.Commenting.FunctionComment.IncorrectTypeHint"/>
+        <exclude name="Squiz.Commenting.FunctionComment.TypeHintMissing"/>
+        <exclude name="Squiz.Commenting.FunctionComment.ScalarTypeHintMissing"/>
+        <exclude name="Squiz.Commenting.FunctionComment.IncorrectParamVarName"/>
+        <exclude name="Squiz.Commenting.FunctionComment.InvalidReturn"/>
+        <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType"/>
+        <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamName"/>
+        <exclude name="Squiz.Commenting.FunctionComment.InvalidNoReturn"/>
+        <exclude name="Squiz.Commenting.FunctionComment.EmptyThrows"/>
+    </rule>
+
     <!-- Les fichiers de configuration et le contrôleur frontal retournent ou exécutent du code : effets de bord attendus. -->
     <rule ref="PSR1.Files.SideEffects">
         <exclude-pattern>config/*</exclude-pattern>
