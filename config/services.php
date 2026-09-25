@@ -10,7 +10,10 @@
 
 declare(strict_types=1);
 
+use App\Controller\Admin\AgencyController;
 use App\Controller\Admin\DashboardController;
+use App\Controller\Admin\TripController as AdminTripController;
+use App\Controller\Admin\UserController;
 use App\Controller\AuthController;
 use App\Controller\HomeController;
 use App\Controller\TripController;
@@ -30,7 +33,9 @@ use App\Repository\AgencyRepository;
 use App\Repository\TripRepository;
 use App\Repository\UserRepository;
 use App\Security\Auth;
+use App\Service\AgencyService;
 use App\Service\TripService;
+use App\Validator\AgencyValidator;
 use App\Validator\LoginValidator;
 use App\Validator\TripValidator;
 use Symfony\Component\HttpFoundation\Request;
@@ -104,6 +109,15 @@ return static function (Container $container, Config $config, string $rootDir): 
         $c->get(Clock::class),
     ));
 
+    $container->set(AgencyValidator::class, static fn (Container $c): AgencyValidator => new AgencyValidator(
+        $c->get(AgencyRepository::class),
+    ));
+
+    $container->set(AgencyService::class, static fn (Container $c): AgencyService => new AgencyService(
+        $c->get(AgencyRepository::class),
+        $c->get(AgencyValidator::class),
+    ));
+
     // --- Contrôleurs ---
     $container->set(HomeController::class, static fn (Container $c): HomeController => new HomeController(
         $c->get(View::class),
@@ -130,7 +144,34 @@ return static function (Container $container, Config $config, string $rootDir): 
         $c->get(Clock::class),
     ));
 
+    // --- Contrôleurs d'administration ---
     $container->set(DashboardController::class, static fn (Container $c): DashboardController => new DashboardController(
         $c->get(View::class),
+        $c->get(UserRepository::class),
+        $c->get(AgencyRepository::class),
+        $c->get(TripRepository::class),
+        $c->get(Clock::class),
+    ));
+
+    $container->set(UserController::class, static fn (Container $c): UserController => new UserController(
+        $c->get(View::class),
+        $c->get(UserRepository::class),
+    ));
+
+    $container->set(AgencyController::class, static fn (Container $c): AgencyController => new AgencyController(
+        $c->get(Request::class),
+        $c->get(View::class),
+        $c->get(AgencyRepository::class),
+        $c->get(AgencyService::class),
+        $c->get(Flash::class),
+    ));
+
+    $container->set(AdminTripController::class, static fn (Container $c): AdminTripController => new AdminTripController(
+        $c->get(View::class),
+        $c->get(TripRepository::class),
+        $c->get(TripService::class),
+        $c->get(Auth::class),
+        $c->get(Flash::class),
+        $c->get(Clock::class),
     ));
 };

@@ -14,6 +14,7 @@ $bootstrap-icons-font-dir: "../fonts";
 
 // --- En-tête : bandeau encadré aux coins arrondis ---
 .app-header {
+  flex-wrap: nowrap;
   background-color: $light;
   border: $border-width * 2 solid $dark;
   border-radius: $border-radius-xl;
@@ -67,4 +68,9 @@ $bootstrap-icons-font-dir: "../fonts";
 .app-footer {
   color: $dark;
   font-size: $font-size-sm;
+}
+
+// Colonne d'actions réduite à son contenu
+.col-actions {
+  width: 1%;
 }
