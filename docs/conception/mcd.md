@@ -30,6 +30,10 @@ Formalisme Merise. Trois entités, trois associations.
 
 ## Diagramme
 
+![MCD](mcd.png)
+
+Source vectorielle : [`mcd.svg`](mcd.svg). Représentation équivalente en notation entité-association :
+
 ```mermaid
 erDiagram
     UTILISATEUR ||--o{ TRAJET : "PROPOSER"
