@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Core\Format;
+
 /**
  * Employé ou administrateur de l'application.
  *
@@ -58,6 +60,6 @@ final class User
      */
     public function formattedPhone(): string
     {
-        return trim(chunk_split($this->phone, 2, ' '));
+        return Format::phone($this->phone);
     }
 }

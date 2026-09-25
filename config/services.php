@@ -13,6 +13,8 @@ declare(strict_types=1);
 use App\Controller\Admin\DashboardController;
 use App\Controller\AuthController;
 use App\Controller\HomeController;
+use App\Core\Clock\Clock;
+use App\Core\Clock\SystemClock;
 use App\Core\Config;
 use App\Core\Container;
 use App\Core\Database;
@@ -23,6 +25,7 @@ use App\Core\Session\Flash;
 use App\Core\Session\NativeSession;
 use App\Core\Session\Session;
 use App\Core\View;
+use App\Repository\TripRepository;
 use App\Repository\UserRepository;
 use App\Security\Auth;
 use App\Validator\LoginValidator;
@@ -58,10 +61,16 @@ return static function (Container $container, Config $config, string $rootDir): 
         $config->bool('APP_DEBUG'),
     ));
 
+    $container->set(Clock::class, static fn (): Clock => new SystemClock());
+
     $container->set(ControllerDispatcher::class, static fn (Container $c): ControllerDispatcher => new ControllerDispatcher($c));
 
     // --- Accès aux données ---
     $container->set(UserRepository::class, static fn (Container $c): UserRepository => new UserRepository(
+        $c->get(Database::class),
+    ));
+
+    $container->set(TripRepository::class, static fn (Container $c): TripRepository => new TripRepository(
         $c->get(Database::class),
     ));
 
@@ -78,6 +87,9 @@ return static function (Container $container, Config $config, string $rootDir): 
     // --- Contrôleurs ---
     $container->set(HomeController::class, static fn (Container $c): HomeController => new HomeController(
         $c->get(View::class),
+        $c->get(TripRepository::class),
+        $c->get(Auth::class),
+        $c->get(Clock::class),
     ));
 
     $container->set(AuthController::class, static fn (Container $c): AuthController => new AuthController(

@@ -25,7 +25,7 @@ final class EntityTest extends TestCase
         $user = self::user(1, Role::User);
 
         self::assertSame('Chloé Roux', $user->fullName());
-        self::assertSame('06 33 22 11 99', $user->formattedPhone());
+        self::assertSame("06\u{00A0}33\u{00A0}22\u{00A0}11\u{00A0}99", $user->formattedPhone());
         self::assertFalse($user->isAdmin());
         self::assertTrue(self::user(2, Role::Admin)->isAdmin());
         self::assertSame('Administrateur', Role::Admin->label());
