@@ -1,0 +1,70 @@
+// =============================================================================
+// Feuille de style de l'application
+// -----------------------------------------------------------------------------
+// Bootstrap est importé après la surcharge de ses variables. Les règles
+// propres à l'application n'utilisent que des variables Bootstrap.
+// =============================================================================
+
+@import "variables";
+
+@import "bootstrap/scss/bootstrap";
+
+$bootstrap-icons-font-dir: "../fonts";
+@import "bootstrap-icons/font/bootstrap-icons";
+
+// --- En-tête : bandeau encadré aux coins arrondis ---
+.app-header {
+  background-color: $light;
+  border: $border-width * 2 solid $dark;
+  border-radius: $border-radius-xl;
+}
+
+.app-brand {
+  color: $dark;
+  font-weight: $font-weight-semibold;
+
+  &:hover,
+  &:focus {
+    color: $primary;
+  }
+}
+
+// --- Tableaux de données ---
+.table-app {
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+
+  thead th {
+    background-color: $dark;
+    color: $white;
+    font-weight: $font-weight-semibold;
+    text-align: center;
+    border-color: shade-color($dark, 10%);
+  }
+
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
+}
+
+// Boutons d'action iconiques des lignes de tableau
+.btn-icon {
+  --#{$prefix}btn-padding-x: .25rem;
+  --#{$prefix}btn-padding-y: 0;
+  --#{$prefix}btn-color: #{$dark};
+  --#{$prefix}btn-hover-color: #{$primary};
+  --#{$prefix}btn-active-color: #{$primary};
+  line-height: 1;
+}
+
+.btn-icon-danger {
+  --#{$prefix}btn-hover-color: #{$danger};
+  --#{$prefix}btn-active-color: #{$danger};
+}
+
+// --- Pied de page ---
+.app-footer {
+  color: $dark;
+  font-size: $font-size-sm;
+}

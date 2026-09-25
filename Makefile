@@ -6,7 +6,7 @@ EXEC    := $(DC) exec -T -u www-data app
 COMPOSE_ENV := UID=$(shell id -u) GID=$(shell id -g)
 
 .DEFAULT_GOAL := help
-.PHONY: help install up down restart ps logs sh composer-install db-reset db-shell lint lint-fix stan test test-unit test-integration coverage verify
+.PHONY: help install up down restart ps logs sh composer-install db-reset db-shell lint lint-fix stan test test-unit test-integration coverage verify npm-install css css-watch
 
 help: ## Affiche cette aide
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
@@ -15,7 +15,7 @@ help: ## Affiche cette aide
 	cp .env.example .env
 	@echo ".env créé à partir de .env.example : personnaliser les mots de passe si nécessaire."
 
-install: .env up composer-install ## Installe et démarre l'environnement complet
+install: .env up composer-install npm-install css ## Installe et démarre l'environnement complet
 
 up: .env ## Construit et démarre les conteneurs
 	$(COMPOSE_ENV) $(DC) up -d --build --wait
@@ -68,3 +68,12 @@ coverage: ## Rapport de couverture (texte et HTML dans var/coverage)
 	$(EXEC) vendor/bin/phpunit --coverage-text --coverage-html var/coverage
 
 verify: lint stan test ## Tous les contrôles qualité
+
+npm-install: ## Installe les dépendances front (Bootstrap, Sass)
+	$(COMPOSE_ENV) $(DC) run --rm assets npm ci --no-audit --no-fund
+
+css: ## Compile le Sass et copie les ressources front dans public/assets
+	$(COMPOSE_ENV) $(DC) run --rm assets npm run build
+
+css-watch: ## Recompile le Sass à chaque modification
+	$(COMPOSE_ENV) $(DC) run --rm assets npm run watch:css
