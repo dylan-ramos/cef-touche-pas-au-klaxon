@@ -16,6 +16,7 @@ declare(strict_types=1);
 use App\Controller\Admin\DashboardController;
 use App\Controller\AuthController;
 use App\Controller\HomeController;
+use App\Controller\TripController;
 use App\Core\Container;
 use App\Core\Routing\ControllerDispatcher;
 use App\Security\Auth;
@@ -34,6 +35,13 @@ return static function (Router $router, ControllerDispatcher $dispatch, Containe
     $router->get('/login', $dispatch->to(AuthController::class, 'showLogin', $guest));
     $router->post('/login', $dispatch->to(AuthController::class, 'login', $guest));
     $router->post('/logout', $dispatch->to(AuthController::class, 'logout', $user));
+
+    // --- Trajets (employés connectés) ---
+    $router->get('/trips/create', $dispatch->to(TripController::class, 'create', $user));
+    $router->post('/trips', $dispatch->to(TripController::class, 'store', $user));
+    $router->get('/trips/:id/edit', $dispatch->to(TripController::class, 'edit', $user));
+    $router->post('/trips/:id', $dispatch->to(TripController::class, 'update', $user));
+    $router->post('/trips/:id/delete', $dispatch->to(TripController::class, 'delete', $user));
 
     // --- Administration ---
     $router->get('/admin', $dispatch->to(DashboardController::class, 'index', $admin));
